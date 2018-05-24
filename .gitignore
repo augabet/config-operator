@@ -1,6 +1,5 @@
 # Binaries for programs and plugins
 *.exe
-*.exe~
 *.dll
 *.so
 *.dylib
@@ -11,3 +10,15 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 vendor/
+
+# Project-local glide cache, RE: https://github.com/Masterminds/glide/issues/736
+.glide/
+
+# Folders
+vendor
+_obj
+_test
+_output
+.kube
+.vscode
+.idea
