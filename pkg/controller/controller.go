@@ -4,9 +4,11 @@ import (
 	"sync"
 	"time"
 
+	"k8s.io/api/apps/v1beta2"
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/watch"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/cache"
@@ -64,5 +66,30 @@ func NewConfigMapController(kclient *kubernetes.Clientset) *ConfigMapController 
 }
 
 func (c *ConfigMapController) reconcile(_, obj interface{}) {
-	//Add update code here
+	cm := obj.(*v1.ConfigMap)
+	ns := cm.Namespace
+
+	deployList, err := c.kclient.Apps().Deployments(ns).List(metav1.ListOptions{})
+	if err != nil {
+		panic(err)
+	}
+
+	var referCMList []v1beta2.Deployment
+	for _, deploy := range deployList.Items {
+		if isRefered(cm.Name, deploy) {
+			referCMList = append(referCMList, deploy)
+		}
+	}
+
+	for _, deploy := range referCMList {
+		err = c.triggerRollingUpdate(cm.UID, deploy)
+	}
+}
+
+func isRefered(cmName string, deploy v1beta2.Deployment) bool {
+	return true
+}
+
+func (c *ConfigMapController) triggerRollingUpdate(cmUID types.UID, deploy v1beta2.Deployment) error {
+	return nil
 }
