@@ -1,13 +1,10 @@
 package controller
 
 import (
-	"fmt"
-	"log"
 	"sync"
 	"time"
 
 	"k8s.io/api/core/v1"
-	"k8s.io/api/rbac/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/watch"
@@ -57,7 +54,7 @@ func NewConfigMapController(kclient *kubernetes.Clientset) *ConfigMapController 
 	)
 
 	configMapInformer.AddEventHandler(cache.ResourceEventHandlerFuncs{
-		AddFunc: configMapWatcher.createRoleBinding,
+		UpdateFunc: configMapWatcher.reconcile,
 	})
 
 	configMapWatcher.kclient = kclient
@@ -66,37 +63,6 @@ func NewConfigMapController(kclient *kubernetes.Clientset) *ConfigMapController 
 	return configMapWatcher
 }
 
-func (c *ConfigMapController) createRoleBinding(obj interface{}) {
-	configmapObj := obj.(*v1.ConfigMap)
-	namespaceName := configmapObj.Namespace
-
-	roleBinding := &v1beta1.RoleBinding{
-		TypeMeta: metav1.TypeMeta{
-			Kind:       "RoleBinding",
-			APIVersion: "rbac.authorization.k8s.io/v1beta1",
-		},
-		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("ad-kubernetes-%s", namespaceName),
-			Namespace: namespaceName,
-		},
-		Subjects: []v1beta1.Subject{
-			v1beta1.Subject{
-				Kind: "Group",
-				Name: fmt.Sprintf("ad-kubernetes-%s", namespaceName),
-			},
-		},
-		RoleRef: v1beta1.RoleRef{
-			APIGroup: "rbac.authorization.k8s.io",
-			Kind:     "ClusterRole",
-			Name:     "edit",
-		},
-	}
-
-	_, err := c.kclient.Rbac().RoleBindings(namespaceName).Create(roleBinding)
-
-	if err != nil {
-		log.Println(fmt.Sprintf("Failed to create Role Binding: %s", err.Error()))
-	} else {
-		log.Println(fmt.Sprintf("Created AD RoleBinding for Namespace: %s", roleBinding.Name))
-	}
+func (c *ConfigMapController) reconcile(_, obj interface{}) {
+	//Add update code here
 }
