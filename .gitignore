@@ -16,6 +16,7 @@ vendor/
 
 # Folders
 vendor
+bin/
 _obj
 _test
 _output
