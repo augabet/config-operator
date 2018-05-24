@@ -1,7 +1,6 @@
 package main
 
 import (
-	"configmap-operator/pkg/controller"
 	"flag"
 	"log"
 	"os"
@@ -9,6 +8,8 @@ import (
 	"path/filepath"
 	"sync"
 	"syscall"
+
+	controller "github.com/octo-technology/config-operator/pkg/controller"
 
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
