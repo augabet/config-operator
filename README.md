@@ -9,4 +9,4 @@ To come
 ### Build from source
 1. `make install_deps`
 2. `make build`
-3. `./bin/configmap-operator --run-outside-cluster 1`
+3. `./bin/config-operator --run-outside-cluster 1`
