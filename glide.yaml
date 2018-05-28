@@ -1,3 +1,4 @@
-package: github.com/treacher/namespace-rolebinding-operator
+package: github.com/octo-technology/config-operator
 import:
 - package: k8s.io/client-go
+  version: v6.0.0

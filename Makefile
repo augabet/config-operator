@@ -1,4 +1,4 @@
-OPERATOR_NAME  := configmap-operator
+OPERATOR_NAME  := config-operator
 VERSION := $(shell date +%Y%m%d%H%M)
 IMAGE := treacher/$(OPERATOR_NAME)
 
